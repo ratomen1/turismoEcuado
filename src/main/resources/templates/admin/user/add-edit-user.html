@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout" layout:decorate="layout">
+<head>
+<title>Usuario Detalle</title>
+</head>
+<body>
+	<section layout:fragment="header">
+		<h1>
+			Usuario Detalle <small>Panel de control</small>
+		</h1>
+		<ol class="breadcrumb">
+			<li><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
+			<li class="active">Usuario Detalle</li>
+		</ol>
+	</section>
+	<div layout:fragment="content">
+		<div class="row">
+			<div class="col-md-12">
+				<!-- Horizontal Form -->
+				<div class="box box-info">
+					<div class="box-header with-border">
+						<h3 class="box-title">Usuario Detalle</h3>
+					</div>
+
+					<div class="box-body">
+						<form th:action="@{/user/save}" th:object="${user}" method="post"
+							class="form-horizontal">
+							<div class="box-body">
+								<div class="form-group">
+									<label class="col-sm-2 control-label">Id</label>
+									<div class="col-sm-10">
+										<input type="text" th:name="${'idUser'}" class="form-control" readonly="readonly"
+											th:field="*{id}" placeholder="Id">
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="col-sm-2 control-label">Nombre</label>
+									<div class="col-sm-10">
+										<input type="text" class="form-control"
+											th:field="*{firstName}" />
+										<p class="text-red" th:if="${#fields.hasErrors('firstName')}"
+											th:errors="*{firstName}"></p>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="col-sm-2 control-label">Apellido</label>
+									<div class="col-sm-10">
+										<input type="text" class="form-control" th:field="*{lastName}" />
+										<p class="text-red" th:if="${#fields.hasErrors('lastName')}"
+											th:errors="*{lastName}"></p>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="col-sm-2 control-label">Email</label>
+									<div class="col-sm-10">
+										<input type="email" disabled="disabled" class="form-control" th:field="*{email}" />
+										<p class="text-red" th:if="${#fields.hasErrors('email')}"
+											th:errors="*{email}"></p>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="col-sm-2 control-label">Password</label>
+									<div class="col-sm-10">
+										<input type="password" class="form-control"
+											th:disabled="*{id} == null ? 'false' : 'true'"
+											th:field="*{password}" />
+										<p class="text-red" th:if="${#fields.hasErrors('password')}"
+											th:errors="*{password}"></p>
+									</div>
+								</div>
+							
+							<div class="row">
+							<div class="col-sm-12">
+
+										<div class="form-group row">
+											<label for="buscar_rol" class="col-sm-2 control-label" th:text="'Buscar rol'"></label>
+											<div class="col-sm-10">												
+													<input type="text" placeholder="BUSCAR ROL" class="form-control" name="buscar_rol" id="buscar_rol" />
+											</div>
+										</div>
+										<table th:replace="admin/user/plantilla-roles :: userRoles"></table>
+						
+									<input hidden="true" th:name="${'lblIdsRoles'}" id="lblIdsRoles" ></input>
+									<table id="tblRoles" class="table table-bordered table-striped dataTable" role="grid" aria-describedby="tblRoles_info">
+
+									<thead class="thead">
+										<tr>
+											<th>Id</th>
+											<th>Nombre</th>
+											<th class="text-center">Activo</th>
+											<th>Clave</th>
+											<th class="text-center">Acciones</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr th:each="role : ${user.roles}">
+											<td th:text="${role.id}">Id</td>
+											<td th:text="${role.name}">Nombre</td>
+											<td>
+												<div class="form-check form-check-inline text-center">
+													<input class="form-check-input text-center"
+														style="width: 25px" th:checked="${role.active}"
+														th:value="${role.active}" type="checkbox" 
+														disabled>
+												</div>
+											</td>
+											<td th:text="${role.key}">Clave</td>
+											<td class="text-center"><a href="#"
+												class="btn btn-danger btn-xs purple deleteView"
+												title="Eliminar"><i class="fa fa-trash-o"></i> Eliminar</a>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+
+							</div>
+							<!-- /.box -->
+						</div>
+							
+							</div>
+							
+							<!-- /.box-body -->
+							<div class="box-footer center">
+								<a th:href="@{/user/list}">
+									<button type="button" class="btn btn-default">
+										<i class="fa fa-right"></i> Cancelar
+									</button>
+								</a>
+								<button type="submit" onclick="itemsHelper.leerTable();" class="btn btn-info pull-right">
+									<i class="fa fa-save"></i> Guardar
+								</button>
+							</div>
+							<!-- /.box-footer -->
+						</form>
+						
+					</div>
+					
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<th:block layout:fragment="script">
+		<script>
+			$(function() {
+				$('#tblRoles').DataTable({
+					'paging' : true,
+					'lengthChange' : false,
+					'searching' : false,
+					'ordering' : true,
+					'info' : true,
+					'autoWidth' : false					
+				})
+				jQuery('#tblRoles_wrapper input').addClass(
+						"form-control input-sm"); // modify table search input
+			})
+		</script>
+		<script>
+		$(document).ready(function() {
+
+			$("#buscar_rol").autocomplete({
+				minLength : 3,
+				source : function(request, response) {
+					$.ajax({
+						url : "/user/cargar-roles/" + request.term,
+						dataType : "json",
+						data : {
+							term : request.term
+						},
+						success : function(data) {
+							response($.map(data, function(item) {
+								return {
+									value : item.id,
+									label : item.name,
+									active : item.active,
+									key : item.key,
+								};
+							}));
+						},
+					});
+				},
+				select : function(event, ui) {
+					$("#buscar_rol").val(ui.item.label);
+					if(!itemsHelper.hasRol(ui.item.value)){
+						var linea = $("#plantillaRoles").html();
+					
+						linea = linea.replace(/{ID}/g, ui.item.value);
+						linea = linea.replace(/{NOMBRE}/g, ui.item.label);
+						linea = linea.replace(/{ACTIVE}/g, ui.item.active);
+						linea = linea.replace(/{KEY}/g, ui.item.key);
+						
+						//$("#tblRoles tbody").append(linea);	
+						itemsHelper.agregarRol(parseInt(ui.item.value));
+					}
+					
+					return false;
+				}
+			});
+			
+			$("form").submit(function(){
+				$("#tblRoles").remove(ui.item.value);
+				return;
+			});
+			
+		});		
+		var itemsHelper = {
+			hasRol : function(id) {
+				var resultado = false;					
+					$('#tblRoles tbody tr').each(function (index2) {
+						var td_id = $(this).find("td").eq(0).html();
+						if (parseInt(id) == parseInt(td_id)) {
+							resultado = true;
+						}
+					});
+					return resultado;
+				},
+				leerTable:function(){
+					var arrayRoles =[];
+					$('#tblRoles tbody tr').each(function (index2) {
+						var pk = $(this).find("td").eq(0).html();						
+						arrayRoles.push(pk);						
+					});	
+					console.log('pk::::==>> '+arrayRoles);
+					
+					var idsRoles='';
+					for(var i=0;i<arrayRoles.length;i++){
+						console.log('==>> '+arrayRoles[i]);
+						idsRoles =idsRoles+','+arrayRoles[i];
+					}
+					console.log('concat==>> '+idsRoles);
+					
+					//$("#lblIdsRoles").append(idsRoles);
+					$("#lblIdsRoles").val(idsRoles);
+					
+				},
+				eliminarLineaRol: function(id){
+					$("#row_" + id).remove();					
+				},
+				agregarRol: function(idRol){
+					$.ajax({
+						url:'/user/add-rol/' + idRol,
+						method:'GET',
+						
+						success:function(){
+							var table = $('#tblRoles').DataTable();
+							table.ajax.reload();
+							 location.reload();
+						}
+					})
+				}
+			}
+		</script>
+	</th:block>
+</body>
+</html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+	<table th:fragment="userRoles" hidden="true" >
+		<tbody id="plantillaRoles">
+			<tr id="row_{ID}" >
+				<td id="rowId">{ID}</td>
+				<td>{NOMBRE}</td>
+				<td>{ACTIVE}</td>
+				<td>{KEY}</td>				
+				<td class="text-center">
+					<a href="#" class="btn btn-danger btn-xs purple deleteView" onclick="itemsHelper.eliminarLineaRol({ID});">
+						<i class="fa fa-trash-o"></i>
+						Eliminar
+					</a>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</body>
+</html>

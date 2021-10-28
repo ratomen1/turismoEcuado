@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	layout:decorate="layout">
+<head>
+<title>Dashboard</title>
+</head>
+<body>
+	<section layout:fragment="header">
+		<h1>
+			Usuarios <small>Pane de control</small>
+		</h1>
+		<ol class="breadcrumb">
+			<li><a href="/"><i class="fa fa-dashboard"></i> Home</a></li>
+			<li class="active">Dashboard</li>
+		</ol>
+	</section>
+	<div layout:fragment="content">
+
+		<div class="row">
+			<div class="col-xs-12">
+				<div class="box">
+					<div class="box-header">
+						<h3 class="box-title">Usuarios</h3>
+					</div>
+					<!-- /.box-header -->
+					<div class="box-body">
+					<div class="box-footer center">
+                        <a th:href="@{/user/add}">
+                            <button type="button" class="btn btn-primary pull-right"><i class="fa fa-plus"></i> Crear</button>
+                        </a>
+                        <!--<form th:action="@{/product/list}" method="get">
+                            <input type="search" th:value="${param.search}" name='search' placeholder="search">
+                            <button type="submit">Search</button>
+                        </form>-->
+                    </div>
+                    <div th:if="${param.success}">
+                        <div class="alert alert-success alert-dismissible">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                            <h4><i class="icon fa fa-check"></i> ¡Éxito!</h4>
+                            Información guardada con éxito.
+                        </div>
+                    </div>
+                    <div th:if="${param.deleted}">
+                        <div class="alert alert-info alert-dismissible">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                            <h4><i class="icon fa fa-check"></i> ¡Eliminado!</h4>
+                            Información eliminada con éxito.
+                        </div>
+                    </div>
+                    
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <table id="tblUsers" class="table table-bordered table-striped dataTable" role="grid"
+                                       aria-describedby="tblUsers_info">
+                                    <thead class="thead">
+                                    <tr>
+                                        <th>Id</th>
+                                        <th>Nombre</th>
+                                        <th>Apellido</th>
+                                        <th>Email</th>                                        
+                                        <th class="text-center">Activo</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="user : ${listUsers}">
+                                        <td th:text="${user.id}">Id</td>                                        
+                                        <td th:text="${user.firstName}">Nombre</td>
+                                        <td th:text="${user.lastName}">Apellido</td>
+                                        <td th:text="${user.email}">Email</td>                                        
+                                        <td>                                        
+                                        	<div class="form-check form-check-inline text-center">
+                                        		<input class="form-check-input text-center" style="width: 25px" 
+                                        		th:checked="${user.active}" th:value="${user.active}" type="checkbox" id="activo" disabled>
+                                        	</div>
+                                        </td>
+                                        <td class="text-center">
+                                            <a href="#" class="btn btn-primary btn-xs purple editView" title="Editar" th:href="@{'/user/edit/' + ${user.id}}"><i class="fa fa-edit"></i> Editar</a>
+                                            <a href="#" class="btn btn-danger btn-xs purple deleteView" title="Eliminar" th:href="@{'/user/delete/' + ${user.id}}"><i class="fa fa-trash-o"></i> Eliminar</a>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+					</div>
+					<!-- /.box-body -->
+				</div>
+				<!-- /.box -->
+			</div>
+			<!-- /.col -->
+		</div>
+	</div>
+	<th:block layout:fragment="script">
+ <script>
+      $(function () {
+
+        $('#tblUsers').DataTable({
+          'paging'      : true,
+          'lengthChange': false,
+          'searching'   : true,
+          'ordering'    : true,
+          'info'        : true,
+          'autoWidth'   : false
+        })
+
+        jQuery('#tblUsers_wrapper input').addClass("form-control input-sm"); // modify table search input
+      })
+
+</script>
+</th:block>
+</body>
+
+</html>
